@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Log4j2 的配置文件 -->
+<Configuration status="WARN">
+    <!-- 变量配置 -->
+    <Properties>
+        <Property name="log_path">D:/my/logs</Property>
+        <property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t-%L] %-5level %logger{36} %L %M - %msg%xEx%n</property>
+    </Properties>
+
+    <!-- appender配置 -->
+    <Appenders>
+        <!--<Console name="Console" target="SYSTEM_OUT">-->
+            <!--<JsonLayout pattern="[%d][%t][%p][%c:%L] %m%n" />-->
+        <!--</Console>-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%highlight{%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %M() @%L - %msg%n}{FATAL=Bright Red, ERROR=Bright Magenta, WARN=Bright Yellow, INFO=Bright Green, DEBUG=Bright Cyan, TRACE=Bright White}"/>
+        </Console>
+        <!--<RollingFile name="DailyRollingFile" fileName="${log_path}/app.log" filePattern="${log_path}/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">-->
+            <!--<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />-->
+            <!--<PatternLayout pattern="${PATTERN}" />-->
+            <!--<SizeBasedTriggeringPolicy size="10MB" />-->
+        <!--</RollingFile>-->
+        <RollingFile name="DailyRollingFile" fileName="${log_path}\\logs2.log"
+                     filePattern="${log_path}\\logs2%d{yyyy-MM-dd}.log">
+            <JsonLayout pattern="[%d][%t][%p][%c:%L] %m%n" />
+            <TimeBasedTriggeringPolicy interval="1" />
+            <SizeBasedTriggeringPolicy size="10 MB" />
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <appender-ref ref="Console" />
+            <appender-ref ref="DailyRollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>

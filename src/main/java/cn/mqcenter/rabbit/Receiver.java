@@ -1,5 +1,7 @@
 package cn.mqcenter.rabbit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,24 +18,22 @@ import java.util.Map;
 @Component
 @RabbitListener(queues = "fanout.messages")
 public class Receiver {
+    private static Logger logger = LogManager.getLogger(Receiver.class);
+
     @Value("${spring.rabbitmq.push-url}")
     private String url;
 
     @RabbitHandler
     public void process(Map<String, String> queue) throws Exception {
-        //String url = "http://localhost:8080/boss/push/pushSingleDevice";
+        logger.info("fanoutMessageReceiver params:" + queue);
+
         LinkedMultiValueMap body = new LinkedMultiValueMap();
 
         for (Map.Entry<String, String> entry : queue.entrySet()) {
-            System.out.println("fanoutMessageReceiver: key=" + entry.getKey() + ", value:" + entry.getValue());
-
-            if (entry.getKey().equals("url")) {
-                System.out.println("http:" + url);
-                url = entry.getValue();
-            } else {
-                body.add(entry.getKey(), entry.getValue());
-            }
+            body.add(entry.getKey(), entry.getValue());
         }
+
+        logger.info("fanoutMessageReceiver: pushurl=" + url);
 
         RestTemplate restTemplate = new RestTemplate();
 

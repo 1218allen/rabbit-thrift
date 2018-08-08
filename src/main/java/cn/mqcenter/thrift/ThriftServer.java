@@ -1,6 +1,8 @@
 package cn.mqcenter.thrift;
 
 import cn.mqcenter.Message;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.server.TNonblockingServer;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ThriftServer {
+    private static Logger logger = LogManager.getLogger(ThriftServer.class);
     private TProtocolFactory protocolFactory;
     private TFramedTransport.Factory transportFactory;
 
@@ -30,10 +33,10 @@ public class ThriftServer {
             tArgs.protocolFactory(protocolFactory);
             tArgs.transportFactory(transportFactory);
             TServer server = new TNonblockingServer(tArgs);
-            System.out.println("thrift服务启动成功, 端口=7911");
+            logger.info("thrift服务启动成功, 端口=7911");
             server.serve();
         } catch (Exception e) {
-            System.out.println("thrift服务启动失败");
+            logger.error("thrift服务启动失败");
         }
     }
 }
