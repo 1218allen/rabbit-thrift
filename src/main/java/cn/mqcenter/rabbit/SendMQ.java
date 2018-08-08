@@ -6,38 +6,37 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 public class SendMQ {
-    @Autowired
     private AmqpTemplate rabbitTemplate;
-    @Autowired
     private Queue queue;
-    @Autowired
     private FanoutExchange exchange;
+    private PropertiesConfig config;
 
     public SendMQ() {
-        rabbitTemplate = new RabbitTemplate(connectionFactory());
-        queue = new Queue("fanout.messages");
-        exchange = new FanoutExchange("fanoutExchange");
+        config = new PropertiesConfig();
     }
 
     public void send(Map<String, String> params) {
+        queue = new Queue(config.getQueue());
+        exchange = new FanoutExchange(config.getExchange());
         System.out.println("exchange:" + exchange.getName());
         System.out.println("queue:" + queue.getName());
+        rabbitTemplate = new RabbitTemplate(connectionFactory());
         this.rabbitTemplate.convertAndSend(exchange.getName(), queue.getName(), params);
     }
 
     private ConnectionFactory connectionFactory() {
+        System.out.println("host:" + config.getHost() + ", port:" + config.getPort() + ", user:" + config.getUsername() + ", pwd:" + config.getPassword() + ", vhost:" + config.getVirtualHost());
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setAddresses("192.168.107.200:5672");
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
-        connectionFactory.setVirtualHost("/");
+        connectionFactory.setAddresses(config.getHost() + ":" + config.getPort());
+        connectionFactory.setUsername(config.getUsername());
+        connectionFactory.setPassword(config.getPassword());
+        connectionFactory.setVirtualHost(config.getVirtualHost());
 
         return connectionFactory;
     }

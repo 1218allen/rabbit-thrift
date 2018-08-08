@@ -2,6 +2,7 @@ package cn.mqcenter.rabbit;
 
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,9 +16,12 @@ import java.util.Map;
 @Component
 @RabbitListener(queues = "fanout.messages")
 public class Receiver {
+    @Value("${spring.rabbitmq.push-url}")
+    private String url;
+
     @RabbitHandler
     public void process(Map<String, String> queue) throws Exception {
-        String url = "";
+        //String url = "http://localhost:8080/boss/push/pushSingleDevice";
         LinkedMultiValueMap body = new LinkedMultiValueMap();
 
         for (Map.Entry<String, String> entry : queue.entrySet()) {
