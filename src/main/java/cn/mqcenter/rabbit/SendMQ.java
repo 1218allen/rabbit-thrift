@@ -20,6 +20,7 @@ public class SendMQ {
     private Queue queue;
     private FanoutExchange exchange;
     private PropertiesConfig config;
+//    private TopicExchange topicExchange;
 
     public SendMQ() {
         config = new PropertiesConfig();
@@ -28,10 +29,11 @@ public class SendMQ {
     public void send(Map<String, String> params) {
         queue = new Queue(config.getQueue());
         exchange = new FanoutExchange(config.getExchange());
+//        topicExchange = new TopicExchange("topicExchange");
         logger.info("exchange:" + exchange.getName() + ", queue:" + queue.getName());
 
         rabbitTemplate = new RabbitTemplate(connectionFactory());
-        this.rabbitTemplate.convertAndSend(exchange.getName(), queue.getName(), params);
+        this.rabbitTemplate.convertAndSend(exchange.getName(), "", params);
     }
 
     private ConnectionFactory connectionFactory() {

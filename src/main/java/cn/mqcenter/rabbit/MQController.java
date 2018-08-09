@@ -1,6 +1,5 @@
-package cn.mqcenter.thrift;
+package cn.mqcenter.rabbit;
 
-import cn.mqcenter.rabbit.SendMQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +25,6 @@ public class MQController {
         params.put("env", env);
         params.put("msgtype", msgType);
 
-//        SendMQ sender = new SendMQ();
         sender.send(params);
 
         return "success";
